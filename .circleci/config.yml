@@ -14,17 +14,21 @@ workflows:
       - test-remember:
           name: remember-linux
           exec: linux
+          env_var: FOO
       - test-recall:
           name: recall-linux
           exec: linux
+          env_var: FOO
           requires:
             - remember-linux
       - test-remember:
           name: remember-mac
           exec: mac
+          env_var: BAR
       - test-recall:
           name: recall-mac
           exec: mac
+          env_var: BAR
           requires:
             - remember-mac
       #- test-remember:
@@ -68,25 +72,29 @@ jobs:
     parameters:
       exec:
         type: executor
+      env_var:
+        type: string
     executor: << parameters.exec >>
     steps:
       - mem/remember:
-          env_var: FOO
+          env_var: << parameters.env_var >>
           value: bar
       - run:
           name: I can use this right away...
-          command: '[[ $FOO == "bar" ]]'
+          command: '[[ $<< parameters.env_var >> == "bar" ]]'
   test-recall:
     parameters:
       exec:
         type: executor
+      env_var:
+        type: string
     executor: << parameters.exec >>
     steps:
       - mem/recall:
-          env_var: FOO
+          env_var: << parameters.env_var >>
       - run:
           name: ...or later!
-          command: '[[ $FOO == "bar" ]]'
+          command: '[[ $<< parameters.env_var >> == "bar" ]]'
   build-and-validate:
     docker:
       - image: circleci/ruby:2.4
