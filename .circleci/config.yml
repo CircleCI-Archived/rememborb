@@ -181,11 +181,11 @@ orbs:
               name: Remember << parameters.env_var >>
               command: |
                 export << parameters.env_var >>="<< parameters.value >>"
-                exporter="export << parameters.env_var >>=${<< parameters.env_var >>}"
+                exporter="export << parameters.env_var >>=\"${<< parameters.env_var >>}\""
                 echo $exporter >> $BASH_ENV
                 remember_file="/tmp/circleci_remember/.circleci_remember/<< parameters.env_var >>"
                 mkdir -p $(dirname $remember_file)
-                echo $exporter >> $remember_file
+                echo ${<< parameters.env_var >>} >> $remember_file
                 echo Remembering << parameters.env_var >> = ${<< parameters.env_var >>}
           - persist_to_workspace:
               # TODO: platform agnostic
@@ -206,7 +206,8 @@ orbs:
           - run:
               name: Recall << parameters.env_var >>
               command: |
-                exporter=$(cat /tmp/circleci_remember/.circleci_remember/<< parameters.env_var >>)
-                $exporter
+                export_value=$(cat /tmp/circleci_remember/.circleci_remember/<< parameters.env_var >>)
+                export << parameters.env_var >>=$export_value
+                exporter="export << parameters.env_var >>=\"$export_value\""
                 echo $exporter >> $BASH_ENV
                 echo Recalled << parameters.env_var >> = ${<< parameters.env_var >>}
