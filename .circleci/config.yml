@@ -200,10 +200,15 @@ orbs:
           env_var:
             description: The environment variable to recall.
             type: string
+          when:
+            description: Specify when to recall
+            type: string
+            default: "always"
         steps:
           - attach_workspace:
               at: /tmp/circleci_remember
           - run:
+              when: << parameters.when >>
               name: Recall << parameters.env_var >>
               command: |
                 export_value=$(cat /tmp/circleci_remember/.circleci_remember/<< parameters.env_var >>)
