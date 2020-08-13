@@ -117,6 +117,9 @@ orbs:
       A lightweight utility to persist environment variables across steps in a
       job, or across jobs in a workflow.
 
+    display:
+      source_url: https://github.com/CircleCI-Public/rememborb
+
     examples:
       standard_usage:
         description: |
